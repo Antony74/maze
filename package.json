@@ -1,0 +1,20 @@
+{
+    "name": "maze",
+    "version": "1.0.0",
+    "scripts": {
+        "start": "parcel src/index.html"
+    },
+    "author": "Antony74",
+    "license": "MIT",
+    "dependencies": {
+        "p5": "^1.10.0"
+    },
+    "devDependencies": {
+        "@types/p5": "^1.7.6",
+        "parcel": "^2.12.0"
+    },
+    "prettier": {
+        "tabWidth": 4,
+        "singleQuote": true
+    }
+}
