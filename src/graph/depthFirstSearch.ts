@@ -6,7 +6,7 @@ export const createDepthFirstSearch = <
 >(
     startVertex: Vertex<VertexProps, EdgeProps>,
     graph: Graph<VertexProps, EdgeProps>,
-    visit: (vertex) => void
+    visit: (vertex: Vertex<VertexProps, EdgeProps>) => void
 ) => {
     type VertexType = Vertex<VertexProps, EdgeProps>;
 

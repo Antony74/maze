@@ -32,5 +32,5 @@ export type Graph<VertexProps, EdgeProps> = {
         edge: Edge<VertexProps, EdgeProps>
     ) => Vertex<VertexProps, EdgeProps>;
 
-    get vertices(): IterableIterator<Readonly<Vertex<VertexProps, EdgeProps>>>;
+    get vertices(): IterableIterator<Vertex<VertexProps, EdgeProps>>;
 };

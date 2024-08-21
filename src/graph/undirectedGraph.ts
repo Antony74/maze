@@ -10,7 +10,7 @@ export const createUndirectedGraph = <VertexProps, EdgeProps>(
 
     const baseGraph = createDirectedGraph<VertexProps, EdgeProps>(idGenerator);
 
-    const graph: Graph<VertexType, EdgeType> = {
+    const graph: Graph<VertexProps, EdgeProps> = {
         ...baseGraph,
         addEdge: (from: VertexType, to: VertexType, props: EdgeProps) => {
             const edge = { ...props, from, to };

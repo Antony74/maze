@@ -11,11 +11,11 @@ export const createDirectedGraph = <VertexProps, EdgeProps>(
 
     const vertices = new Map<string, VertexWithId>();
 
-    const graph: Graph<VertexType, EdgeType> = {
+    const graph: Graph<VertexProps, EdgeProps> = {
         addVertex: (props: VertexProps): VertexType => {
             const id = idGenerator.getId();
             const vertex = { ...props, id, edges: [] };
-            vertices[id] = vertex;
+            vertices.set(id, vertex);
             return vertex;
         },
         deleteVertex: (vertex: VertexWithId) => {
