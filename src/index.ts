@@ -5,12 +5,14 @@ new p5((p: p5) => {
     const graph = createGraphOfGrid({ xSize: 2, ySize: 2 });
 
     for (const vertex of graph.vertices) {
-        console.log(`vertex (${vertex.x}, ${vertex.y}) connects to`);
+        console.log(`vertex (${vertex.x}, ${vertex.y}) leads`);
+        let index = 0;
         for (const edge of vertex.edges) {
             const connectedVertex = graph.followEdge(vertex, edge);
             console.log(
-                `    vertex (${connectedVertex.x}, ${connectedVertex.y})`
+                `    ${vertex.directions[index]} to vertex (${connectedVertex.x}, ${connectedVertex.y})`
             );
+            ++index;
         }
     }
 

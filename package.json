@@ -2,7 +2,7 @@
     "name": "maze",
     "version": "1.0.0",
     "scripts": {
-        "build": "tsc",
+        "tsc": "tsc",
         "start": "parcel src/index.html"
     },
     "author": "Antony74",
