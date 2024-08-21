@@ -2,6 +2,7 @@
     "name": "maze",
     "version": "1.0.0",
     "scripts": {
+        "build": "tsc src/index.ts",
         "start": "parcel src/index.html"
     },
     "author": "Antony74",
@@ -11,7 +12,8 @@
     },
     "devDependencies": {
         "@types/p5": "^1.7.6",
-        "parcel": "^2.12.0"
+        "parcel": "^2.12.0",
+        "typescript": "^5.5.4"
     },
     "prettier": {
         "tabWidth": 4,
