@@ -11,13 +11,12 @@ export type Edge<VertexProps, EdgeProps> = {
 } & EdgeProps;
 
 export type Visitable = { visited: boolean };
+export type Id = Readonly<{ id: string }>;
 
 export type Graph<VertexProps, EdgeProps> = {
-    addVertex: (props: VertexProps) => Vertex<VertexProps, EdgeProps>;
+    addVertex: (props: VertexProps) => Vertex<VertexProps & Id, EdgeProps>;
 
-    deleteVertex: (
-        vertex: Vertex<VertexProps & { id: string }, EdgeProps>
-    ) => void;
+    deleteVertex: (vertex: Id) => void;
 
     addEdge: (
         from: Vertex<VertexProps, EdgeProps>,

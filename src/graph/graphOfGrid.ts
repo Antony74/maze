@@ -1,4 +1,4 @@
-import { Edge, Graph, Vertex } from './graph';
+import { Edge, Graph, Id, Vertex } from './graph';
 import { createUndirectedGraph } from './undirectedGraph';
 
 export type GridVertexProps = {
@@ -7,51 +7,54 @@ export type GridVertexProps = {
     directions: ('up' | 'down' | 'left' | 'right')[];
 };
 
-export type GridEdgeProps = {};
-
-export type GridVertex = Vertex<GridVertexProps, GridEdgeProps>;
-export type GridEdge = Edge<GridVertexProps, GridEdgeProps>;
-
-export type GridGraph = Graph<GridVertexProps, GridEdgeProps>;
-
-export type GraphOfGridProps = {
-    graph?: GridGraph;
+export type GraphOfGridProps<VertexProps, EdgeProps> = {
+    graph?: Graph<VertexProps, EdgeProps>;
     xSize: number;
     ySize: number;
+    initialEdgeProps: EdgeProps;
 };
 
-export const createGraphOfGrid = ({
-    graph,
-    xSize,
-    ySize,
-}: GraphOfGridProps): GridGraph => {
-    graph = graph ?? createUndirectedGraph<GridVertexProps, GridEdgeProps>();
+export const createGraphOfGrid = <EdgeProps = {}>(
+    props: GraphOfGridProps<GridVertexProps, EdgeProps>
+) => {
+    type VertexType = Vertex<GridVertexProps & Id, EdgeProps>;
+    type EdgeType = Edge<GridVertexProps, EdgeProps>;
 
-    const grid: GridVertex[][] = [];
+    type VertexTypeWithId = Vertex<GridVertexProps & Id, EdgeProps>;
+
+    const { xSize, ySize, initialEdgeProps } = props;
+
+    const graph =
+        props.graph ?? createUndirectedGraph<GridVertexProps, EdgeProps>();
+
+    const grid: (VertexType | undefined)[][] = Array.from({
+        length: xSize,
+    }).map(() => Array.from({ length: ySize }));
 
     for (let y = 0; y < ySize; ++y) {
-        const prevRow = y ? grid[grid.length - 1] : undefined;
-        const currentRow: GridVertex[] = [];
         for (let x = 0; x < xSize; ++x) {
             const vertex = graph.addVertex({ x, y, directions: [] });
-            const prevVertex = x
-                ? currentRow[currentRow.length - 1]
-                : undefined;
+            grid[x][y] = vertex;
+            const prevVertex = x ? grid[x - 1][y] : undefined;
+
             if (prevVertex) {
-                graph.addEdge(prevVertex, vertex, {});
+                graph.addEdge(
+                    prevVertex,
+                    vertex,
+                    initialEdgeProps
+                );
                 vertex.directions.push('left');
                 prevVertex.directions.push('right');
             }
-            if (prevRow) {
-                const prevRowVertex = prevRow[x];
-                graph.addEdge(prevRowVertex, vertex, {});
+
+            const prevRowVertex = y ? grid[x][y - 1] : undefined;
+            if (prevRowVertex) {
+                graph.addEdge(prevRowVertex, vertex, initialEdgeProps);
                 vertex.directions.push('up');
                 prevRowVertex.directions.push('down');
             }
-            currentRow.push(vertex);
         }
-        grid.push(currentRow);
     }
 
-    return graph;
+    return { grid, graph };
 };

@@ -2,7 +2,11 @@ import p5 from 'p5';
 import { createGraphOfGrid } from './graph/graphOfGrid';
 
 new p5((p: p5) => {
-    const graph = createGraphOfGrid({ xSize: 2, ySize: 2 });
+    const { graph } = createGraphOfGrid({
+        xSize: 2,
+        ySize: 2,
+        initialEdgeProps: {},
+    });
 
     for (const vertex of graph.vertices) {
         console.log(`vertex (${vertex.x}, ${vertex.y}) leads`);

@@ -1,4 +1,4 @@
-import { Vertex, Edge, Graph } from './graph';
+import { Vertex, Edge, Graph, Id } from './graph';
 import { createSequentialIdGenerator, IdGenerator } from './idGenerator';
 
 export const createDirectedGraph = <VertexProps, EdgeProps>(
@@ -7,32 +7,37 @@ export const createDirectedGraph = <VertexProps, EdgeProps>(
     type VertexType = Vertex<VertexProps, EdgeProps>;
     type EdgeType = Edge<VertexProps, EdgeProps>;
 
-    type VertexWithId = VertexType & { id: string };
+    type VertexWithId = Vertex<VertexProps & Id, EdgeProps>;
 
     const vertices = new Map<string, VertexWithId>();
 
     const graph: Graph<VertexProps, EdgeProps> = {
-        addVertex: (props: VertexProps): VertexType => {
+        addVertex: (props: VertexProps): VertexWithId => {
             const id = idGenerator.getId();
-            const vertex = { ...props, id, edges: [] };
-            vertices.set(id, vertex);
+            const vertex: VertexWithId = { ...props, id, edges: [] };
+            vertices.set(vertex.id, vertex);
             return vertex;
         },
-        deleteVertex: (vertex: VertexWithId) => {
+
+        deleteVertex: (vertex: Id) => {
             vertices.delete(vertex.id);
         },
+
         addEdge: (from: VertexType, to: VertexType, props: EdgeProps) => {
             const edge = { ...props, from, to };
-            from.edges.push(edge);
+            edge.from.edges.push(edge);
             return edge;
         },
+
         deleteEdge: (edge: EdgeType) => {
             edge.from.edges.filter((e) => e !== edge);
         },
+
         followEdge: (_vertex: VertexType, edge: EdgeType): VertexType => {
             return edge.to;
         },
-        get vertices(): IterableIterator<Readonly<VertexType>> {
+
+        get vertices(): IterableIterator<VertexType> {
             return vertices.values();
         },
     };
