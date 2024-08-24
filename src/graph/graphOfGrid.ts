@@ -18,9 +18,6 @@ export const createGraphOfGrid = <EdgeProps = {}>(
     props: GraphOfGridProps<GridVertexProps, EdgeProps>
 ) => {
     type VertexType = Vertex<GridVertexProps & Id, EdgeProps>;
-    type EdgeType = Edge<GridVertexProps, EdgeProps>;
-
-    type VertexTypeWithId = Vertex<GridVertexProps & Id, EdgeProps>;
 
     const { xSize, ySize, initialEdgeProps } = props;
 
