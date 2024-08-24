@@ -12,6 +12,7 @@ export type GraphOfGridProps<VertexProps, EdgeProps> = {
     xSize: number;
     ySize: number;
     initialEdgeProps: EdgeProps;
+    vertexFilterFunction?: (x: number, y: number) => boolean;
 };
 
 export const createGraphOfGrid = <EdgeProps = {}>(
@@ -19,7 +20,7 @@ export const createGraphOfGrid = <EdgeProps = {}>(
 ) => {
     type VertexType = Vertex<GridVertexProps & Id, EdgeProps>;
 
-    const { xSize, ySize, initialEdgeProps } = props;
+    const { xSize, ySize, initialEdgeProps, vertexFilterFunction } = props;
 
     const graph =
         props.graph ?? createUndirectedGraph<GridVertexProps, EdgeProps>();
@@ -30,16 +31,16 @@ export const createGraphOfGrid = <EdgeProps = {}>(
 
     for (let y = 0; y < ySize; ++y) {
         for (let x = 0; x < xSize; ++x) {
+            if (vertexFilterFunction && vertexFilterFunction(x, y) === false) {
+                continue;
+            }
+
             const vertex = graph.addVertex({ x, y, directions: [] });
             grid[x][y] = vertex;
             const prevVertex = x ? grid[x - 1][y] : undefined;
 
             if (prevVertex) {
-                graph.addEdge(
-                    prevVertex,
-                    vertex,
-                    initialEdgeProps
-                );
+                graph.addEdge(prevVertex, vertex, initialEdgeProps);
                 vertex.directions.push('left');
                 prevVertex.directions.push('right');
             }
