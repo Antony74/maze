@@ -1,35 +1,11 @@
 import * as React from 'react';
 import ReactDOM from 'react-dom';
 import { Sketch } from './sketch';
-import { Button, Grid, MenuItem, TextField } from '@mui/material';
+import { Grid } from '@mui/material';
 import GitHubForkRibbon from 'react-github-fork-ribbon';
+import { Controls } from './controls';
 
-const margin = 10;
 const padding = 50;
-
-const Controls = () => {
-    return (
-        <Grid container justifyContent="center">
-            <TextField
-                select
-                label="Mode"
-                size="small"
-                value={'plain'}
-                style={{ width: '200px', margin }}
-            >
-                <MenuItem key={1} value={'plain'}>
-                    Plain
-                </MenuItem>
-                <MenuItem key={2} value={'step'}>
-                    Step through
-                </MenuItem>
-            </TextField>
-            <Button variant="outlined" style={{ margin }}>
-                Reset
-            </Button>
-        </Grid>
-    );
-};
 
 const App = () => {
     return (
