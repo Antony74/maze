@@ -8,11 +8,20 @@
     "author": "Antony74",
     "license": "MIT",
     "dependencies": {
-        "p5": "^1.10.0"
+        "@emotion/react": "^11.13.3",
+        "@emotion/styled": "^11.13.0",
+        "@fontsource/roboto": "^5.0.14",
+        "@mui/material": "^5.16.7",
+        "p5": "^1.10.0",
+        "react": "^17.0.2",
+        "react-dom": "^17.0.2",
+        "react-github-fork-ribbon": "^0.7.1"
     },
     "devDependencies": {
         "@types/p5": "^1.7.6",
+        "@types/react-dom": "^18.3.0",
         "parcel": "^2.12.0",
+        "process": "^0.11.10",
         "typescript": "^5.5.4"
     },
     "prettier": {

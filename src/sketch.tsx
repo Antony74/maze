@@ -3,10 +3,12 @@ import { createGraphOfGrid } from './graph/graphOfGrid';
 import { createDepthFirstSearch } from './graph/depthFirstSearch';
 import { Visitable } from './graph/graph';
 import { shuffle } from './shuffle';
+import { useEffect, useRef } from 'react';
+import React from 'react';
 
 type MazeEdgeProps = { wall: boolean };
 
-new p5((p: p5) => {
+const sketch = (p: p5) => {
     const xSize = 10;
     const ySize = 10;
 
@@ -121,4 +123,21 @@ new p5((p: p5) => {
     p.keyPressed = () => {
         search.step();
     };
-});
+};
+
+export const Sketch = () => {
+    // create a reference to the container in which the p5 instance should place the canvas
+    const p5ContainerRef = useRef();
+
+    useEffect(() => {
+        // On component creation, instantiate a p5 object with the sketch and container reference
+        const p5Instance = new p5(sketch, p5ContainerRef.current);
+
+        // On component destruction, delete the p5 instance
+        return () => {
+            p5Instance.remove();
+        };
+    }, []);
+
+    return <div className="App" ref={p5ContainerRef as any} />;
+};
