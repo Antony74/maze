@@ -1,5 +1,7 @@
 import p5 from 'p5';
 import { createGraphOfGrid } from './graph/graphOfGrid';
+import { depthFirstSearch } from './graph/depthFirstSearch';
+import { Visitable } from './graph/graph';
 
 type MazeEdgeProps = { wall: boolean };
 
@@ -10,10 +12,15 @@ new p5((p: p5) => {
     const line = (from: p5.Vector, to: p5.Vector) =>
         p.line(from.x, from.y, to.x, to.y);
 
-    const { grid } = createGraphOfGrid<MazeEdgeProps>({
+    const { graph, grid } = createGraphOfGrid<Visitable, MazeEdgeProps>({
         xSize,
         ySize,
+        initialVertexProps: { visited: false },
         initialEdgeProps: { wall: true },
+    });
+
+    depthFirstSearch(grid[0][0]!, graph, (_vertex, edge) => {
+        edge.wall = false;
     });
 
     const getVertexPosition = (xIndex: number, yIndex: number) => {
@@ -87,7 +94,7 @@ new p5((p: p5) => {
                         );
                     }
 
-                    if (!downVertex && (!downEdge|| rightEdge.wall)) {
+                    if (!downVertex && (!downEdge || rightEdge.wall)) {
                         line(
                             getVertexPosition(x - 0.5, y + 0.5),
                             getVertexPosition(x + 0.5, y + 0.5)

@@ -1,4 +1,4 @@
-import { Edge, Graph, Id, Vertex } from './graph';
+import { Graph, Id, Vertex } from './graph';
 import { createUndirectedGraph } from './undirectedGraph';
 
 export type GridVertexProps = {
@@ -8,22 +8,30 @@ export type GridVertexProps = {
 };
 
 export type GraphOfGridProps<VertexProps, EdgeProps> = {
-    graph?: Graph<VertexProps, EdgeProps>;
+    graph?: Graph<VertexProps & GridVertexProps, EdgeProps>;
     xSize: number;
     ySize: number;
+    initialVertexProps: VertexProps;
     initialEdgeProps: EdgeProps;
     vertexFilterFunction?: (x: number, y: number) => boolean;
 };
 
-export const createGraphOfGrid = <EdgeProps = {}>(
-    props: GraphOfGridProps<GridVertexProps, EdgeProps>
+export const createGraphOfGrid = <VertexProps, EdgeProps = {}>(
+    props: GraphOfGridProps<VertexProps, EdgeProps>
 ) => {
-    type VertexType = Vertex<GridVertexProps & Id, EdgeProps>;
+    type VertexType = Vertex<VertexProps & GridVertexProps & Id, EdgeProps>;
 
-    const { xSize, ySize, initialEdgeProps, vertexFilterFunction } = props;
+    const {
+        xSize,
+        ySize,
+        initialVertexProps,
+        initialEdgeProps,
+        vertexFilterFunction,
+    } = props;
 
     const graph =
-        props.graph ?? createUndirectedGraph<GridVertexProps, EdgeProps>();
+        props.graph ??
+        createUndirectedGraph<VertexProps & GridVertexProps, EdgeProps>();
 
     const grid: (VertexType | undefined)[][] = Array.from({
         length: xSize,
@@ -35,7 +43,12 @@ export const createGraphOfGrid = <EdgeProps = {}>(
                 continue;
             }
 
-            const vertex = graph.addVertex({ x, y, directions: [] });
+            const vertex = graph.addVertex({
+                x,
+                y,
+                directions: [],
+                ...initialVertexProps,
+            });
             grid[x][y] = vertex;
             const prevVertex = x ? grid[x - 1][y] : undefined;
 

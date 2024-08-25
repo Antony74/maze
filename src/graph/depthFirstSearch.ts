@@ -1,4 +1,18 @@
-import { Graph, Vertex, Visitable } from './graph';
+import { Edge, Graph, Vertex, Visitable } from './graph';
+
+export type VisitFunction<VertexProps extends Visitable, EdgeProps> = (
+    vertex: Vertex<VertexProps, EdgeProps>,
+    edge: Edge<VertexProps, EdgeProps>
+) => void;
+
+export const depthFirstSearch = <VertexProps extends Visitable, EdgeProps>(
+    startVertex: Vertex<VertexProps, EdgeProps>,
+    graph: Graph<VertexProps, EdgeProps>,
+    visit: VisitFunction<VertexProps, EdgeProps>
+) => {
+    const search = createDepthFirstSearch(startVertex, graph, visit);
+    while (search.step() === true) {}
+};
 
 export const createDepthFirstSearch = <
     VertexProps extends Visitable,
@@ -6,7 +20,7 @@ export const createDepthFirstSearch = <
 >(
     startVertex: Vertex<VertexProps, EdgeProps>,
     graph: Graph<VertexProps, EdgeProps>,
-    visit: (vertex: Vertex<VertexProps, EdgeProps>) => void
+    visit: VisitFunction<VertexProps, EdgeProps>
 ) => {
     type VertexType = Vertex<VertexProps, EdgeProps>;
 
@@ -26,7 +40,7 @@ export const createDepthFirstSearch = <
             for (const edge of currentVertex.edges) {
                 const nextVertex = graph.followEdge(currentVertex, edge);
                 if (nextVertex.visited === false) {
-                    visit(nextVertex);
+                    visit(nextVertex, edge);
                     nextVertex.visited = true;
                     stack.push(nextVertex);
                     return true;
