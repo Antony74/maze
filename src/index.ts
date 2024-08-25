@@ -68,26 +68,21 @@ new p5((p: p5) => {
                     const upVertex = (grid[x] ?? [])[y - 1];
                     const downVertex = (grid[x] ?? [])[y + 1];
 
-                    const leftEdgeIndex = vertex.directions.findIndex(
-                        (direction) => direction === 'left'
+                    const leftEdge = vertex.edges.find(
+                        (edge) => graph.getDirection(vertex, edge) === 'left'
                     );
 
-                    const rightEdgeIndex = vertex.directions.findIndex(
-                        (direction) => direction === 'right'
+                    const rightEdge = vertex.edges.find(
+                        (edge) => graph.getDirection(vertex, edge) === 'right'
                     );
 
-                    const upEdgeIndex = vertex.directions.findIndex(
-                        (direction) => direction === 'up'
+                    const upEdge = vertex.edges.find(
+                        (edge) => graph.getDirection(vertex, edge) === 'up'
                     );
 
-                    const downEdgeIndex = vertex.directions.findIndex(
-                        (direction) => direction === 'down'
+                    const downEdge = vertex.edges.find(
+                        (edge) => graph.getDirection(vertex, edge) === 'down'
                     );
-
-                    const leftEdge = vertex.edges[leftEdgeIndex];
-                    const rightEdge = vertex.edges[rightEdgeIndex];
-                    const upEdge = vertex.edges[upEdgeIndex];
-                    const downEdge = vertex.edges[downEdgeIndex];
 
                     if (!leftVertex || !leftEdge || leftEdge.wall) {
                         line(
@@ -110,7 +105,7 @@ new p5((p: p5) => {
                         );
                     }
 
-                    if (!downVertex && (!downEdge || rightEdge.wall)) {
+                    if (!downVertex && (!downEdge || downEdge.wall)) {
                         line(
                             getVertexPosition(x - 0.5, y + 0.5),
                             getVertexPosition(x + 0.5, y + 0.5)

@@ -1,10 +1,9 @@
-import { Graph, Id, Vertex } from './graph';
+import { Edge, Graph, Id, Vertex } from './graph';
 import { createUndirectedGraph } from './undirectedGraph';
 
 export type GridVertexProps = {
     x: number;
     y: number;
-    directions: ('up' | 'down' | 'left' | 'right')[];
 };
 
 export type GraphOfGridProps<VertexProps, EdgeProps> = {
@@ -20,6 +19,7 @@ export const createGraphOfGrid = <VertexProps, EdgeProps = {}>(
     props: GraphOfGridProps<VertexProps, EdgeProps>
 ) => {
     type VertexType = Vertex<VertexProps & GridVertexProps & Id, EdgeProps>;
+    type EdgeType = Edge<VertexProps & GridVertexProps & Id, EdgeProps>;
 
     const {
         xSize,
@@ -29,9 +29,29 @@ export const createGraphOfGrid = <VertexProps, EdgeProps = {}>(
         vertexFilterFunction,
     } = props;
 
-    const graph =
+    const baseGraph =
         props.graph ??
         createUndirectedGraph<VertexProps & GridVertexProps, EdgeProps>();
+
+    const graph = {
+        ...baseGraph,
+        getDirection: (
+            from: VertexType,
+            edge: EdgeType
+        ): 'up' | 'down' | 'left' | 'right' | undefined => {
+            const to = graph.followEdge(from, edge);
+
+            if (from.x < to.x) {
+                return 'right';
+            } else if (from.x > to.x) {
+                return 'left';
+            } else if (from.y < to.y) {
+                return 'down';
+            } else if (from.y > to.y) {
+                return 'up';
+            }
+        },
+    };
 
     const grid: (VertexType | undefined)[][] = Array.from({
         length: xSize,
@@ -54,15 +74,11 @@ export const createGraphOfGrid = <VertexProps, EdgeProps = {}>(
 
             if (prevVertex) {
                 graph.addEdge(prevVertex, vertex, initialEdgeProps);
-                vertex.directions.push('left');
-                prevVertex.directions.push('right');
             }
 
             const prevRowVertex = y ? grid[x][y - 1] : undefined;
             if (prevRowVertex) {
                 graph.addEdge(prevRowVertex, vertex, initialEdgeProps);
-                vertex.directions.push('up');
-                prevRowVertex.directions.push('down');
             }
         }
     }
