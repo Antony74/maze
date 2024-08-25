@@ -1,6 +1,6 @@
 import p5 from 'p5';
 import { createGraphOfGrid } from './graph/graphOfGrid';
-import { depthFirstSearch } from './graph/depthFirstSearch';
+import { createDepthFirstSearch } from './graph/depthFirstSearch';
 import { Visitable } from './graph/graph';
 import { shuffle } from './shuffle';
 
@@ -24,9 +24,13 @@ new p5((p: p5) => {
         shuffle(vertex.edges);
     }
 
-    depthFirstSearch(grid[0][0]!, graph, (_vertex, edge) => {
-        edge.wall = false;
-    });
+    const search = createDepthFirstSearch(
+        grid[0][0]!,
+        graph,
+        (_vertex, edge) => {
+            edge.wall = false;
+        }
+    );
 
     const getVertexPosition = (xIndex: number, yIndex: number) => {
         const x = p.map(xIndex, -2, xSize + 1, 0, p.width);
@@ -41,13 +45,19 @@ new p5((p: p5) => {
 
     p.draw = () => {
         p.background(255);
-        p.fill(0, 255, 255);
 
         for (let y = 0; y < ySize; ++y) {
             for (let x = 0; x < xSize; ++x) {
                 const vertex = grid[x][y];
                 if (vertex) {
                     const vertexPosition = getVertexPosition(x, y);
+
+                    if (vertex.visited) {
+                        p.fill(255, 0, 0);
+                    } else {
+                        p.fill(0, 255, 255);
+                    }
+
                     p.noStroke();
                     p.ellipse(vertexPosition.x, vertexPosition.y, 5);
                     p.stroke(0);
@@ -110,5 +120,10 @@ new p5((p: p5) => {
         }
 
         p.noLoop();
+    };
+
+    p.keyPressed = async () => {
+        search.step();
+        p.loop();
     };
 });
