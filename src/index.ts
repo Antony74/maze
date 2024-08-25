@@ -17,8 +17,8 @@ new p5((p: p5) => {
     });
 
     const getVertexPosition = (xIndex: number, yIndex: number) => {
-        const x = p.map(xIndex, -1, xSize, 0, p.width);
-        const y = p.map(yIndex, -1, ySize, 0, p.height);
+        const x = p.map(xIndex, -2, xSize + 1, 0, p.width);
+        const y = p.map(yIndex, -2, ySize + 1, 0, p.height);
         return new p5.Vector(x, y);
     };
 
@@ -42,17 +42,55 @@ new p5((p: p5) => {
 
                     const leftVertex = (grid[x - 1] ?? [])[y];
                     const rightVertex = (grid[x + 1] ?? [])[y];
+                    const upVertex = (grid[x] ?? [])[y - 1];
+                    const downVertex = (grid[x] ?? [])[y + 1];
 
                     const leftEdgeIndex = vertex.directions.findIndex(
                         (direction) => direction === 'left'
                     );
 
+                    const rightEdgeIndex = vertex.directions.findIndex(
+                        (direction) => direction === 'right'
+                    );
+
+                    const upEdgeIndex = vertex.directions.findIndex(
+                        (direction) => direction === 'up'
+                    );
+
+                    const downEdgeIndex = vertex.directions.findIndex(
+                        (direction) => direction === 'down'
+                    );
+
                     const leftEdge = vertex.edges[leftEdgeIndex];
+                    const rightEdge = vertex.edges[rightEdgeIndex];
+                    const upEdge = vertex.edges[upEdgeIndex];
+                    const downEdge = vertex.edges[downEdgeIndex];
 
                     if (!leftVertex || !leftEdge || leftEdge.wall) {
                         line(
                             getVertexPosition(x - 0.5, y - 0.5),
                             getVertexPosition(x - 0.5, y + 0.5)
+                        );
+                    }
+
+                    if (!upVertex || !upEdge || upEdge.wall) {
+                        line(
+                            getVertexPosition(x - 0.5, y - 0.5),
+                            getVertexPosition(x + 0.5, y - 0.5)
+                        );
+                    }
+
+                    if (!rightVertex && (!rightEdge || rightEdge.wall)) {
+                        line(
+                            getVertexPosition(x + 0.5, y - 0.5),
+                            getVertexPosition(x + 0.5, y + 0.5)
+                        );
+                    }
+
+                    if (!downVertex && (!downEdge|| rightEdge.wall)) {
+                        line(
+                            getVertexPosition(x - 0.5, y + 0.5),
+                            getVertexPosition(x + 0.5, y + 0.5)
                         );
                     }
                 }
