@@ -20,7 +20,9 @@ export const createUndirectedGraph = <VertexProps, EdgeProps>(
         },
         deleteEdge: (edge: EdgeType) => {
             baseGraph.deleteEdge(edge);
+            const swap = edge.to;
             edge.to = edge.from;
+            edge.from = swap;
             baseGraph.deleteEdge(edge);
         },
         followEdge: (vertex: VertexType, edge: EdgeType): VertexType => {

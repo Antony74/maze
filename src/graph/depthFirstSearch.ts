@@ -40,9 +40,9 @@ export const createDepthFirstSearch = <
             for (const edge of currentVertex.edges) {
                 const nextVertex = graph.followEdge(currentVertex, edge);
                 if (nextVertex.visited === false) {
-                    visit(nextVertex, edge);
                     nextVertex.visited = true;
                     stack.push(nextVertex);
+                    visit(nextVertex, edge);
                     return true;
                 }
             }

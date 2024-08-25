@@ -29,6 +29,7 @@ new p5((p: p5) => {
         graph,
         (_vertex, edge) => {
             edge.wall = false;
+            p.loop();
         }
     );
 
@@ -122,8 +123,7 @@ new p5((p: p5) => {
         p.noLoop();
     };
 
-    p.keyPressed = async () => {
+    p.keyPressed = () => {
         search.step();
-        p.loop();
     };
 });
