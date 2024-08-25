@@ -2,6 +2,7 @@ import p5 from 'p5';
 import { createGraphOfGrid } from './graph/graphOfGrid';
 import { depthFirstSearch } from './graph/depthFirstSearch';
 import { Visitable } from './graph/graph';
+import { shuffle } from './shuffle';
 
 type MazeEdgeProps = { wall: boolean };
 
@@ -18,6 +19,10 @@ new p5((p: p5) => {
         initialVertexProps: { visited: false },
         initialEdgeProps: { wall: true },
     });
+
+    for (const vertex of graph.vertices) {
+        shuffle(vertex.edges);
+    }
 
     depthFirstSearch(grid[0][0]!, graph, (_vertex, edge) => {
         edge.wall = false;
