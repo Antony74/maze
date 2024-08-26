@@ -1,11 +1,24 @@
 import p5 from 'p5';
-import { createGraphOfGrid } from './graph/graphOfGrid';
-import { createDepthFirstSearch } from './graph/depthFirstSearch';
+import {
+    createGraphOfGrid,
+    GridGraphType,
+    GridType,
+} from './graph/graphOfGrid';
+import { createDepthFirstSearch, Search } from './graph/depthFirstSearch';
 import { Visitable } from './graph/graph';
 import { shuffle } from './shuffle';
 import { useEffect, useRef } from 'react';
 import React from 'react';
 
+let reset = true;
+let resetMazeFunction = () => {};
+
+export const resetMaze = () => {
+    console.log('reset maze');
+    resetMazeFunction();
+};
+
+type MazeVertexProps = Visitable;
 type MazeEdgeProps = { wall: boolean };
 
 const sketch = (p: p5) => {
@@ -15,31 +28,17 @@ const sketch = (p: p5) => {
     const line = (from: p5.Vector, to: p5.Vector) =>
         p.line(from.x, from.y, to.x, to.y);
 
-    const { graph, grid } = createGraphOfGrid<Visitable, MazeEdgeProps>({
-        xSize,
-        ySize,
-        initialVertexProps: { visited: false },
-        initialEdgeProps: { wall: true },
-    });
-
-    for (const vertex of graph.vertices) {
-        shuffle(vertex.edges);
-    }
-
-    const search = createDepthFirstSearch(
-        grid[0][0]!,
-        graph,
-        (_vertex, edge) => {
-            edge.wall = false;
-            p.loop();
-        }
-    );
-
     const getVertexPosition = (xIndex: number, yIndex: number) => {
         const x = p.map(xIndex, -2, xSize + 1, 0, p.width);
         const y = p.map(yIndex, -2, ySize + 1, 0, p.height);
         return new p5.Vector(x, y);
     };
+
+    let graph: GridGraphType<MazeVertexProps, MazeEdgeProps> | undefined =
+        undefined;
+
+    let grid: GridType<MazeVertexProps, MazeEdgeProps> | undefined = undefined;
+    let search: Search | undefined = undefined;
 
     p.setup = () => {
         p.ellipseMode(p.RADIUS);
@@ -48,6 +47,42 @@ const sketch = (p: p5) => {
 
     p.draw = () => {
         p.background(255);
+
+        if (reset) {
+            reset = false;
+
+            const gridAndGraph = createGraphOfGrid<
+                MazeVertexProps,
+                MazeEdgeProps
+            >({
+                xSize,
+                ySize,
+                initialVertexProps: { visited: false },
+                initialEdgeProps: { wall: true },
+            });
+
+            graph = gridAndGraph.graph;
+            grid = gridAndGraph.grid;
+
+            for (const vertex of graph.vertices) {
+                shuffle(vertex.edges);
+            }
+
+            search = createDepthFirstSearch(
+                grid[0][0]!,
+                graph,
+                (_vertex, edge) => {
+                    edge.wall = false;
+                    p.loop();
+                }
+            );
+
+            while (search.step()) {}
+        }
+
+        if (grid === undefined) {
+            throw new Error('No grid');
+        }
 
         for (let y = 0; y < ySize; ++y) {
             for (let x = 0; x < xSize; ++x) {
@@ -58,7 +93,7 @@ const sketch = (p: p5) => {
                     if (vertex.visited) {
                         p.fill(0, 255, 0, 192);
                     } else {
-                        p.fill(200 , 192);
+                        p.fill(200, 192);
                     }
 
                     p.noStroke();
@@ -71,19 +106,19 @@ const sketch = (p: p5) => {
                     const downVertex = (grid[x] ?? [])[y + 1];
 
                     const leftEdge = vertex.edges.find(
-                        (edge) => graph.getDirection(vertex, edge) === 'left'
+                        (edge) => graph?.getDirection(vertex, edge) === 'left'
                     );
 
                     const rightEdge = vertex.edges.find(
-                        (edge) => graph.getDirection(vertex, edge) === 'right'
+                        (edge) => graph?.getDirection(vertex, edge) === 'right'
                     );
 
                     const upEdge = vertex.edges.find(
-                        (edge) => graph.getDirection(vertex, edge) === 'up'
+                        (edge) => graph?.getDirection(vertex, edge) === 'up'
                     );
 
                     const downEdge = vertex.edges.find(
-                        (edge) => graph.getDirection(vertex, edge) === 'down'
+                        (edge) => graph?.getDirection(vertex, edge) === 'down'
                     );
 
                     if (!leftVertex || !leftEdge || leftEdge.wall) {
@@ -121,7 +156,12 @@ const sketch = (p: p5) => {
     };
 
     p.keyPressed = () => {
-        search.step();
+        search?.step();
+    };
+
+    resetMazeFunction = () => {
+        reset = true;
+        p.loop();
     };
 };
 

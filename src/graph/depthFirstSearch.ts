@@ -14,6 +14,8 @@ export const depthFirstSearch = <VertexProps extends Visitable, EdgeProps>(
     while (search.step() === true) {}
 };
 
+export type Search = { step: () => boolean };
+
 export const createDepthFirstSearch = <
     VertexProps extends Visitable,
     EdgeProps
@@ -21,7 +23,7 @@ export const createDepthFirstSearch = <
     startVertex: Vertex<VertexProps, EdgeProps>,
     graph: Graph<VertexProps, EdgeProps>,
     visit: VisitFunction<VertexProps, EdgeProps>
-) => {
+): Search => {
     type VertexType = Vertex<VertexProps, EdgeProps>;
 
     const stack: VertexType[] = [startVertex];

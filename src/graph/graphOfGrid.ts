@@ -15,12 +15,29 @@ export type GraphOfGridProps<VertexProps, EdgeProps> = {
     vertexFilterFunction?: (x: number, y: number) => boolean;
 };
 
+export type GridType<VertexProps, EdgeProps = {}> = (
+    | Vertex<VertexProps & GridVertexProps, EdgeProps>
+    | undefined
+)[][];
+
+export type GridGraphType<VertexProps, EdgeProps = {}> = Graph<
+    VertexProps & GridVertexProps,
+    EdgeProps
+> & {
+    getDirection: (
+        from: Vertex<VertexProps & GridVertexProps, EdgeProps>,
+        edge: Edge<VertexProps & GridVertexProps, EdgeProps>
+    ) => 'up' | 'down' | 'left' | 'right' | undefined;
+};
+
+export type GridAndGraph<VertexProps, EdgeProps = {}> = {
+    grid: GridType<VertexProps, EdgeProps>;
+    graph: GridGraphType<VertexProps, EdgeProps>;
+};
+
 export const createGraphOfGrid = <VertexProps, EdgeProps = {}>(
     props: GraphOfGridProps<VertexProps, EdgeProps>
-) => {
-    type VertexType = Vertex<VertexProps & GridVertexProps & Id, EdgeProps>;
-    type EdgeType = Edge<VertexProps & GridVertexProps & Id, EdgeProps>;
-
+): GridAndGraph<VertexProps, EdgeProps> => {
     const {
         xSize,
         ySize,
@@ -33,11 +50,11 @@ export const createGraphOfGrid = <VertexProps, EdgeProps = {}>(
         props.graph ??
         createUndirectedGraph<VertexProps & GridVertexProps, EdgeProps>();
 
-    const graph = {
+    const graph: GridGraphType<VertexProps, EdgeProps> = {
         ...baseGraph,
         getDirection: (
-            from: VertexType,
-            edge: EdgeType
+            from,
+            edge
         ): 'up' | 'down' | 'left' | 'right' | undefined => {
             const to = graph.followEdge(from, edge);
 
@@ -53,7 +70,7 @@ export const createGraphOfGrid = <VertexProps, EdgeProps = {}>(
         },
     };
 
-    const grid: (VertexType | undefined)[][] = Array.from({
+    const grid: GridType<VertexProps, EdgeProps> = Array.from({
         length: xSize,
     }).map(() => Array.from({ length: ySize }));
 
