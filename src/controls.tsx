@@ -19,10 +19,10 @@ export const Controls = () => {
                     setState(event.target.value);
                 }}
             >
-                {Object.keys(Mode).map((mode, index) => {
+                {Object.entries(Mode).map(([key, value]) => {
                     return (
-                        <MenuItem key={mode} value={mode}>
-                            {Object.values(Mode)[index]}
+                        <MenuItem key={key} value={key}>
+                            {value}
                         </MenuItem>
                     );
                 })}
