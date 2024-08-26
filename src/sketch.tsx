@@ -55,7 +55,7 @@ const sketch = (p: p5) => {
         if (sketchState.reset) {
             sketchState.reset = false;
 
-            const gridAndGraph = createGraphOfGrid<
+            ({ graph, grid } = createGraphOfGrid<
                 MazeVertexProps,
                 MazeEdgeProps
             >({
@@ -63,10 +63,7 @@ const sketch = (p: p5) => {
                 ySize,
                 initialVertexProps: { visited: false },
                 initialEdgeProps: { wall: true },
-            });
-
-            graph = gridAndGraph.graph;
-            grid = gridAndGraph.grid;
+            }));
 
             for (const vertex of graph.vertices) {
                 shuffle(vertex.edges);
