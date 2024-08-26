@@ -1,11 +1,17 @@
 import * as React from 'react';
 import { Button, Grid, MenuItem, TextField } from '@mui/material';
 import { Mode } from './mode';
+import { useNavigate, useParams } from 'react-router-dom';
 
 const margin = 10;
 
 export const Controls = () => {
-    const [state, setState] = React.useState('plain');
+    let { mode } = useParams();
+    const navigate = useNavigate();
+
+    if (!(mode ?? '' in Mode)) {
+        mode = 'plain';
+    }
 
     return (
         <Grid container justifyContent="center">
@@ -13,10 +19,10 @@ export const Controls = () => {
                 select
                 label="Mode"
                 size="small"
-                value={state}
+                value={mode}
                 style={{ width: '200px', margin }}
                 onChange={(event) => {
-                    setState(event.target.value);
+                    navigate(`/${event.target.value}`);
                 }}
             >
                 {Object.entries(Mode).map(([key, value]) => {
