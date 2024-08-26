@@ -20,7 +20,6 @@ let stateChangedFunction = () => {};
 export const setSketchState = (state: Partial<SketchState>) => {
     sketchState = { ...sketchState, ...state };
     stateChangedFunction();
-    console.log(`setSketchState(${JSON.stringify(state, null, 4)})`);
 };
 
 type MazeVertexProps = Visitable;
