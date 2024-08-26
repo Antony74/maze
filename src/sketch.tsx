@@ -9,13 +9,18 @@ import { Visitable } from './graph/graph';
 import { shuffle } from './shuffle';
 import { useEffect, useRef } from 'react';
 import React from 'react';
+import { Mode } from './mode';
 
-let reset = true;
-let resetMazeFunction = () => {};
+export type SketchState = { mode: Mode; reset: boolean };
 
-export const resetMaze = () => {
-    console.log('reset maze');
-    resetMazeFunction();
+let sketchState: SketchState = { mode: Mode.plain, reset: true };
+
+let stateChangedFunction = () => {};
+
+export const setSketchState = (state: Partial<SketchState>) => {
+    sketchState = { ...sketchState, ...state };
+    stateChangedFunction();
+    console.log(`setSketchState(${JSON.stringify(state, null, 4)})`);
 };
 
 type MazeVertexProps = Visitable;
@@ -48,8 +53,8 @@ const sketch = (p: p5) => {
     p.draw = () => {
         p.background(255);
 
-        if (reset) {
-            reset = false;
+        if (sketchState.reset) {
+            sketchState.reset = false;
 
             const gridAndGraph = createGraphOfGrid<
                 MazeVertexProps,
@@ -77,7 +82,9 @@ const sketch = (p: p5) => {
                 }
             );
 
-            while (search.step()) {}
+            if (sketchState.mode !== Mode.step) {
+                while (search.step()) {}
+            }
         }
 
         if (grid === undefined) {
@@ -90,15 +97,17 @@ const sketch = (p: p5) => {
                 if (vertex) {
                     const vertexPosition = getVertexPosition(x, y);
 
-                    if (vertex.visited) {
-                        p.fill(0, 255, 0, 192);
-                    } else {
-                        p.fill(200, 192);
-                    }
+                    if (sketchState.mode === Mode.step) {
+                        if (vertex.visited) {
+                            p.fill(0, 255, 0, 192);
+                        } else {
+                            p.fill(200, 192);
+                        }
 
-                    p.noStroke();
-                    p.ellipse(vertexPosition.x, vertexPosition.y, 5);
-                    p.stroke(0);
+                        p.noStroke();
+                        p.ellipse(vertexPosition.x, vertexPosition.y, 5);
+                        p.stroke(0);
+                    }
 
                     const leftVertex = (grid[x - 1] ?? [])[y];
                     const rightVertex = (grid[x + 1] ?? [])[y];
@@ -159,8 +168,7 @@ const sketch = (p: p5) => {
         search?.step();
     };
 
-    resetMazeFunction = () => {
-        reset = true;
+    stateChangedFunction = () => {
         p.loop();
     };
 };

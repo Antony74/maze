@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Button, Grid, MenuItem, TextField } from '@mui/material';
 import { Mode } from './mode';
 import { useNavigate, useParams } from 'react-router-dom';
-import { resetMaze } from './sketch';
+import { setSketchState } from './sketch';
 
 const margin = 10;
 
@@ -13,6 +13,8 @@ export const Controls = () => {
     if (!(mode ?? '' in Mode)) {
         mode = 'plain';
     }
+
+    setSketchState({ mode: Mode[mode as keyof typeof Mode] });
 
     return (
         <Grid container justifyContent="center">
@@ -34,7 +36,14 @@ export const Controls = () => {
                     );
                 })}
             </TextField>
-            <Button variant="outlined" style={{ margin }} onClick={resetMaze}>
+
+            <Button
+                variant="outlined"
+                style={{ margin }}
+                onClick={() => {
+                    setSketchState({ reset: true });
+                }}
+            >
                 Reset
             </Button>
         </Grid>
