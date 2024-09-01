@@ -1,8 +1,5 @@
 export type Vertex<VertexProps, EdgeProps> = {
-    edges: ({
-        from: Vertex<VertexProps, EdgeProps>;
-        to: Vertex<VertexProps, EdgeProps>;
-    } & EdgeProps)[];
+    edges: Edge<VertexProps, EdgeProps>[];
 } & VertexProps;
 
 export type Edge<VertexProps, EdgeProps> = {
