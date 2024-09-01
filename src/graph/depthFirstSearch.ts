@@ -3,7 +3,7 @@ import { Edge, Graph, Vertex, Visitable } from './graph';
 export type VisitFunction<VertexProps extends Visitable, EdgeProps> = (
     vertex: Vertex<VertexProps, EdgeProps>,
     edge: Edge<VertexProps, EdgeProps>
-) => void;
+) => boolean;
 
 export const depthFirstSearch = <VertexProps extends Visitable, EdgeProps>(
     startVertex: Vertex<VertexProps, EdgeProps>,
@@ -14,7 +14,7 @@ export const depthFirstSearch = <VertexProps extends Visitable, EdgeProps>(
     while (search.step() === true) {}
 };
 
-export type Search = { step: () => boolean };
+export type Search = { step: () => boolean; isStopped: boolean };
 
 export const createDepthFirstSearch = <
     VertexProps extends Visitable,
@@ -31,9 +31,12 @@ export const createDepthFirstSearch = <
 
     startVertex.visited = true;
 
+    let shouldContinue = false;
+
     const depthFirstSearch = {
         step: (): boolean => {
             if (!stack.length) {
+                shouldContinue = false;
                 return false;
             }
 
@@ -44,13 +47,17 @@ export const createDepthFirstSearch = <
                 if (nextVertex.visited === false) {
                     nextVertex.visited = true;
                     stack.push(nextVertex);
-                    visit(nextVertex, edge);
-                    return true;
+                    shouldContinue = visit(nextVertex, edge);
+                    return shouldContinue;
                 }
             }
 
             stack.pop();
             return depthFirstSearch.step();
+        },
+
+        get isStopped(): boolean {
+            return !shouldContinue;
         },
     };
 

@@ -11,9 +11,17 @@ import { useEffect, useRef } from 'react';
 import React from 'react';
 import { Mode } from './mode';
 
-export type SketchState = { mode: Mode; reset: boolean };
+export type SketchState = {
+    mode: Mode;
+    reset: boolean;
+    setStopped: (stopped: boolean) => void;
+};
 
-let sketchState: SketchState = { mode: Mode.plain, reset: true };
+let sketchState: SketchState = {
+    mode: Mode.plain,
+    reset: true,
+    setStopped: () => {},
+};
 
 let stateChangedFunction = () => {};
 
@@ -75,11 +83,15 @@ const sketch = (p: p5) => {
                 (_vertex, edge) => {
                     edge.wall = false;
                     p.loop();
+                    return true;
                 }
             );
 
             if (sketchState.mode !== Mode.step) {
                 while (search.step()) {}
+                sketchState.setStopped(true);
+            } else {
+                sketchState.setStopped(false);
             }
         }
 
@@ -161,7 +173,8 @@ const sketch = (p: p5) => {
     };
 
     p.keyPressed = () => {
-        search?.step();
+        const continuing = search?.step();
+        sketchState.setStopped(!continuing);
     };
 
     stateChangedFunction = () => {

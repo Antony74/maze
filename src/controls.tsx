@@ -9,12 +9,13 @@ const margin = 10;
 export const Controls = () => {
     let { mode } = useParams();
     const navigate = useNavigate();
+    const [stopped, setStopped] = React.useState(false);
 
     if (!(mode ?? '' in Mode)) {
         mode = 'plain';
     }
 
-    setSketchState({ mode: Mode[mode as keyof typeof Mode] });
+    setSketchState({ mode: Mode[mode as keyof typeof Mode], setStopped });
 
     return (
         <Grid container justifyContent="center">
@@ -46,6 +47,8 @@ export const Controls = () => {
             >
                 Reset
             </Button>
+
+            <p>{stopped ? 'Stopped' : 'Not stopped'}</p>
         </Grid>
     );
 };
