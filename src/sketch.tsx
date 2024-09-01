@@ -4,8 +4,8 @@ import {
     GridGraphType,
     GridType,
 } from './graph/graphOfGrid';
-import { createDepthFirstSearch, Search } from './graph/depthFirstSearch';
-import { Visitable } from './graph/graph';
+import { createDepthFirstSearch } from './graph/depthFirstSearch';
+import { Search, Visitable } from './graph/graph';
 import { shuffle } from './shuffle';
 import { useEffect, useRef } from 'react';
 import React from 'react';

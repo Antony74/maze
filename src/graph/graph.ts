@@ -30,3 +30,16 @@ export type Graph<VertexProps, EdgeProps> = {
 
     get vertices(): IterableIterator<Vertex<VertexProps, EdgeProps>>;
 };
+
+export type Search = { step: () => boolean };
+
+export type VisitFunction<VertexProps extends Visitable, EdgeProps> = (
+    vertex: Vertex<VertexProps, EdgeProps>,
+    edge: Edge<VertexProps, EdgeProps>
+) => boolean;
+
+export type CreateSearch<VertexProps extends Visitable, EdgeProps> = (
+    startVertex: Vertex<VertexProps, EdgeProps>,
+    graph: Graph<VertexProps, EdgeProps>,
+    visit: VisitFunction<VertexProps, EdgeProps>
+) => Search;
